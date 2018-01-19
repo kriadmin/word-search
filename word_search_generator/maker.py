@@ -1,5 +1,4 @@
 import random
-from PIL import ImageFont, ImageDraw, Image
 from copy import deepcopy
 def make(row,column):
     return [['_' for _ in range(column)] for a in range(row)] # Generates a empty array of specified width(column) and height(row)
@@ -8,7 +7,7 @@ def add_horizontally(word,array,row,column,backwards=False):
     word = word[::-1] if backwards else word #If backwards is true reverse the word
     somearr = list(word)
     for c in somearr:
-        if((arr[row][column] != '_') & (not (arr[row][column] == c))): #If there already exists a character and it is not same as c then
+        if((arr[row][column] != '_') & (arr[row][column] != c)): #If there already exists a character and it is not same as c then
             raise Exception("Oh the letter is already there") #Throw a error
         else:
             arr[row][column] = c #Else add the letter to the correct row and column
@@ -19,7 +18,7 @@ def add_vertically(word,array,row,column,backwards=False): #Same as add horizont
     word = word[::-1] if backwards else word
     somearr = list(word)
     for c in somearr:
-        if((arr[row][column] != '_') & (not (arr[row][column] == c))):
+        if((arr[row][column] != '_') &  (arr[row][column] != c)):
             raise Exception("Oh the letter is already there")
         else:
             arr[row][column] = c
@@ -30,7 +29,7 @@ def add_diagonally(word,array,row,column,backwards=False): #Same as add_vertical
     word = word[::-1] if backwards else word
     somearr = list(word)
     for c in somearr:
-        if((arr[row][column] != '_') & (not (arr[row][column] != c))):
+        if((arr[row][column] != '_') & (arr[row][column] != c)):
             raise Exception("Oh the letter is already there")
         else:
             arr[row][column] = c
@@ -71,7 +70,7 @@ def randomize(arr): # After the grid is made fill the remaining places with rand
     return [[m if m!='_' else random_alpha() for m in a] for a in arr]
 def generate(row,column,word_list,backwards=True,diagonal=True): # Uses all the above methods to make array
     if((max(len(w) for w in word_list) > row) | (max(len(w) for w in word_list) > column)): #If the word is larger than row or column length than return 'wrong'.
-        return ('wrong',)
+        raise Exception("Word Length can't be more than the number of rows or cloumns")
     else:
         pass
     array = make(row,column)
@@ -111,4 +110,4 @@ def text(arr): # Convert given array to text
             str += word + ' '
         str += '\n'
     return str
-open('test.txt','w').write(text(generate(15,15,['rohit','priya','santosh','apple','pineapple'])))
+open('test.txt','w').write(text(generate(15,15,['Lord','Voldemort','likes','penpineapple','applepen']))) # To test it!
