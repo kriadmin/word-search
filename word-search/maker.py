@@ -103,7 +103,7 @@ def generate(row,column,word_list,backwards=True,diagonal=True): # Uses all the 
                         i = False
                     except Exception:
                         pass
-    return array
+    return randomize(array) # Fill with random characters
 def text(arr): # Convert given array to text  
     str = ''
     for row in arr:
