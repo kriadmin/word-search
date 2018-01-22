@@ -36,12 +36,109 @@ def add_diagonally(word,array,row,column,backwards=False): #Same as add_vertical
             row += 1
             column += 1
     return arr
-def random_condition(rows,columns,backwards=True,diagonals=True): # Generate a random condition for the placement of word
-    row = random.randint(0,rows)
-    column = random.randint(0,columns)
-    backward = backwards if not backwards else [True,False][random.randint(0,1)] #If backwards is false let it remain so else generate a random value
-    diagonal = diagonals if not diagonals else [True,False][random.randint(0,1)] #Same as above
-    return (row,column,backward,diagonal)
+def horizontal_add(word,arr,row,column):
+    return add_horizontally(word,arr,row,column,False)
+def horizontal_add_backwards(word,arr,row,column):
+    return add_horizontally(word,arr,row,column,True)
+def vertical_add(word,arr,row,column):
+    return add_vertically(word,arr,row,column,False)
+def vertical_add_backwards(word,arr,row,column):
+    return add_vertically(word,arr,row,column,True)
+def diagonal_add(word,arr,row,column):
+    return add_diagonally(word,arr,row,column,False)
+def diagonal_add_backwards(word,arr,row,column):
+    return add_diagonally(word,arr,row,column,True)
+def horizontal_check(arr,row,column,word):
+    for letter in list(word):
+        
+        try:
+            if((arr[row][column] == '_') or (arr[row][column] == letter)):
+                pass
+            else:
+                return False
+        except:
+            return False
+        column += 1
+    return True
+def horizontal_check_backwards(arr,row,column,word):
+    word = word[::-1]
+    for letter in list(word):
+        
+        try:
+            if((arr[row][column] == '_') or (arr[row][column] == letter)):
+                pass
+            else:
+                return False
+        except:
+            return False
+        column += 1
+    return True
+def vertical_check(arr,row,column,word):
+    for letter in list(word):
+        
+        try:
+            if((arr[row][column] == '_') or (arr[row][column] == letter)):
+                pass
+            else:
+                return False
+        except:
+            return False
+        row += 1
+    return True
+def vertical_check_backwards(arr,row,column,word):
+    word = word[::-1]
+    for letter in list(word):
+        
+        try:
+            if((arr[row][column] == '_') or (arr[row][column] == letter)):
+                pass
+            else:
+                return False
+        except:
+            return False
+        row += 1
+    return True
+def diagonal_check(arr,row,column,word):
+    for letter in list(word):
+        
+        try:
+            if((arr[row][column] == '_') or (arr[row][column] == letter)):
+                pass
+            else:
+                return False
+        except:
+            return False
+        column += 1
+        row += 1
+    return True
+def diagonal_check_backwards(arr,row,column,word):
+    word = word[::-1]
+    for letter in list(word):
+        try:
+            if((arr[row][column] == '_') or (arr[row][column] == letter)):
+                pass
+            else:
+                return False
+        except:
+            return False
+        column += 1
+        row += 1
+    return True
+def random_condition(arr,word):
+    indexes = []
+    row = len(arr)
+    column = len(arr[0])
+    for i in range(row):
+        for j in range(column):
+            indexes.append([i,j])
+    random.shuffle(indexes)
+    for index in indexes:
+        tests = [horizontal_check,vertical_check,horizontal_check_backwards,vertical_check_backwards,diagonal_check,diagonal_check_backwards]
+        random.shuffle(tests)
+        for test in tests:
+            if(test(arr,index[0],index[1],word)):
+                return (test.__name__,index[0],index[1])
+    raise Exception('Word cannot be fitted')
 def check(condition,word): # Check ifthe provided condition is fitting i.e. there should be no out of index problem
     diagonal = condition[0][3]
     row_start = condition[0][0]
@@ -74,40 +171,17 @@ def generate(row,column,word_list,backwards=True,diagonal=True): # Uses all the 
     else:
         pass
     array = make(row,column)
-    row -= 1 # Because indexing starts at 0!
-    column -= 1 # Because indexing starts at 0!!
     for word in word_list:
-        i = True
-        while(i):
-            vertical = False
-            conditions = random_condition(row,column,backwards=backwards,diagonals=diagonal)
-            if(not conditions[3]): # If diagonal is false
-                vertical = [True,False][random.randint(0,1)]
-            if (check((conditions,row,column,vertical),word)):
-                if(conditions[3]): # If diagonal is true 
-                    try: # We may throw a error
-                        array = deepcopy(add_diagonally(word,array,conditions[0],conditions[1],conditions[2]))
-                        i = False
-                    except Exception:
-                        pass
-                elif(vertical):
-                    try:
-                        array = deepcopy(add_vertically(word,array,conditions[0],conditions[1],conditions[2]))
-                        i = False  
-                    except Exception:
-                        pass    
-                else :
-                    try:
-                        array = deepcopy(add_horizontally(word,array,conditions[0],conditions[1],conditions[2]))
-                        i = False
-                    except Exception:
-                        pass
-    return randomize(array) # Fill with random characters
+        condition = random_condition(array,word)
+        array = deepcopy(globals()[condition[0].replace('check','add')](word,array,condition[1],condition[2]))
+    return (array) # Fill with random characters
 def text(arr): # Convert given array to text  
-    str = ''
+    string = ''
     for row in arr:
         for word in row:
-            str += word + ' '
-        str += '\n'
-    return str
-open('test.txt','w').write(text(generate(15,15,['Lord','Voldemort','likes','penpineapple','applepen']))) # To test it!
+            string += str(word) + ' '
+        string += '\n'
+    return string
+#open('test.txt','w').write(text(generate(15,15,['Lord','Voldemort','likes','penpineapple','applepen']))) # To test it!
+#print(text(make(30,10)))
+
